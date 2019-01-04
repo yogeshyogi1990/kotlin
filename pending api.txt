@@ -1,9 +1,0 @@
-google login
-facebook login
-dealer rating bar 
-reviews rating bar 
-product slider api
-add to cart quantity update pending
-update user detail 
-facebook api
-google api
