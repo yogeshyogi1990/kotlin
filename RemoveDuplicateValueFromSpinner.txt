@@ -1,0 +1,7 @@
+ 			val hashSet = HashSet<String>()
+                        hashSet.addAll(state)
+                        state.clear()
+                        state.addAll(hashSet)
+                        state.sort()
+                        val adapter = ArrayAdapter(this@SignUpActivity, android.R.layout.simple_expandable_list_item_1, state)
+                        spinner_signUp_state.adapter = adapter

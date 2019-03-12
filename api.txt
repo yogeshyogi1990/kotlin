@@ -1,0 +1,3 @@
+login.php
+register.php
+forgot.php

@@ -1,0 +1,24 @@
+ startActivity(Intent(this, Signup_Activity::class.java))
+------------------------------------------------------------------
+
+        Fragment call on activity
+class Home_Activity : AppCompatActivity() {
+    var fragmentManager: FragmentManager? = null
+    var fragmentTransaction: FragmentTransaction? = null 
+
+                 oncreate
+
+      create this function---->   callHomePageFragment(savedInstanceState)
+
+
+ userprofile.setOnClickListener {
+            fragmentTransaction = fragmentManager?.beginTransaction()
+            fragmentTransaction?.replace(R.id.mainframe_layout,MyProfile_Fragment())
+            fragmentTransaction?.commit()
+
+        }
+
+   private fun callHomePageFragment(savedInstanceState: Bundle?) {
+        fragmentManager = supportFragmentManager
+    }
+}
