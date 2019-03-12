@@ -1,4 +1,10 @@
- 			val hashSet = HashSet<String>()
+var statedata = response.body()?.data
+                        for (i in 0 until statedata!!.size)
+                        {
+                            state.add(statedata[i].state.toString())
+                            city.add(statedata[i].city.toString())
+                        }
+                        val hashSet = HashSet<String>()
                         hashSet.addAll(state)
                         state.clear()
                         state.addAll(hashSet)
