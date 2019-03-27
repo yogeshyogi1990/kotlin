@@ -1,0 +1,23 @@
+ val drawerToggles = object : ActionBarDrawerToggle(this, drawerlayout_dealer, R.string.drawer_open, R.string.drawer_close) {
+            override fun onDrawerSlide(drawerView: View, slideOffset: Float) {
+                super.onDrawerSlide(drawerView, slideOffset)
+
+                val slideX = drawerView.width * slideOffset
+                dealer_linear.translationX = slideX
+            }
+        }
+        drawerlayout_dealer.addDrawerListener(drawerToggles)
+        drawerlayout_dealer.drawerElevation = -50.0F
+        drawerlayout_dealer.setScrimColor(ContextCompat.getColor(this, android.R.color.transparent))
+
+//////////////////////////////
+
+imageView_dealer_menu.setOnClickListener {
+
+            if(drawerlayout_dealer.isDrawerOpen(GravityCompat.START)) {
+                drawerlayout_dealer.closeDrawer(Gravity.LEFT)
+            }
+            else{
+                drawerlayout_dealer.openDrawer(Gravity.LEFT)
+            }
+        }

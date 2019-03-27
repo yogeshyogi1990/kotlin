@@ -1,0 +1,32 @@
+ user_picdate.setOnClickListener {
+
+            val calendar = Calendar.getInstance()
+            val day = calendar.get(Calendar.DAY_OF_MONTH)
+            val month = calendar.get(Calendar.MONTH)
+            val year = calendar.get(Calendar.YEAR)
+
+            val dp = DatePickerDialog(activity!!, DatePickerDialog.OnDateSetListener
+            { _, yr, m, d ->
+
+                val tempMonth:String = if (m<9){
+                    "0"+ (m + 1)
+                } else{
+                    ""+ (m + 1)
+                }
+
+                val tempDay:String = if (d<10){
+                    "0"+ d
+                } else{
+                    ""+ d
+                }
+
+                val tempDate = yr.toString() + "-" + tempMonth + "-" + tempDay
+                user_picdate.setText(tempDate)
+
+            }, year, month, day
+            )
+
+            calendar.set(year, month, day)
+            dp.datePicker.minDate = calendar.timeInMillis
+            dp.show()
+        }

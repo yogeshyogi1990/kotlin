@@ -1,0 +1,14 @@
+user_pictime.setOnClickListener {
+
+            val mcurrentTime = Calendar.getInstance()
+            val hour = mcurrentTime.get(Calendar.HOUR_OF_DAY)
+            val minute = mcurrentTime.get(Calendar.MINUTE)
+            val mTimePicker: TimePickerDialog
+            mTimePicker = TimePickerDialog(activity,
+TimePickerDialog.OnTimeSetListener { timePicker, selectedHour, selectedMinute ->
+                    user_pictime.text = "$selectedHour:$selectedMinute"
+                }, hour, minute, true
+            )//Yes 24 hour time
+            //mTimePicker.setTitle("Select Time")
+            mTimePicker.show()
+        }
