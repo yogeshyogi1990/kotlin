@@ -1,0 +1,187 @@
+
+// Adapter By Using Glide and Fragment Data Passing
+
+
+class RecyclerView_Wishlist_Adapter (private val list: MutableList<GetWishlistResponse>?, private val context: Activity,var spinkit_wish:SpinKitView,var recyclerView_wish : RecyclerView,var wishlistrefresh: Fragment) : RecyclerView.Adapter<RecyclerView_Wishlist_Adapter.Myviewholder>() {
+
+    var removewishlist:Call<WishListRemoveModel>? = null
+    var Move_TO_Cart:Call<MoveToCart>?= null
+    var fragmentManager: FragmentManager? = null
+    var fragmentTransaction: FragmentTransaction? = null
+
+    var userId:String? = null
+    var wishlistId:String? = null
+    var pro_Id:String? = null
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) : Myviewholder {
+        val view = LayoutInflater.from(parent.context).inflate(R.layout.recyclerview_wishlist,parent,false)
+        return  Myviewholder(view)
+    }
+
+    override fun getItemCount(): Int {
+        return list!!.size
+    }
+
+
+    override fun onBindViewHolder(holder: Myviewholder, position: Int) {
+
+        var data = list?.get(position)
+
+        holder.name.text = data?.productName
+        holder.price.text = data?.price
+        holder.txtview_quantity.text = data?.quantity.toString()
+
+        Glide.with(context)
+
+                .load(data?.imageUrl)
+                .apply(RequestOptions()
+                        .placeholder(R.drawable.product)
+                        .centerCrop()
+                        .dontAnimate()
+                        .dontTransform())
+                .into(holder.image)
+
+
+
+
+        holder.wishlist_item_remove.setOnClickListener {
+
+            context?.window?.addFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
+            recyclerView_wish.alpha = 0.3f
+            spinkit_wish.visibility = View.VISIBLE
+            val gson = GsonBuilder().setLenient().create()
+            val client = OkHttpClient()
+            val retrofit = Retrofit.Builder()
+                    .baseUrl(Constant.BASE_URL)
+                    .client(client)
+                    .addConverterFactory(GsonConverterFactory.create(gson))
+                    .build()
+            val remove_wish = retrofit.create(Api::class.java)
+            //defining the call
+            wishlistId = data?.id
+            userId = data?.userId
+            removewishlist = remove_wish.removeWishListItem(wishlistId!!,userId!!)
+
+          /*  Toast.makeText(context,wishlistId, Toast.LENGTH_SHORT).show()
+            Toast.makeText(context,userId, Toast.LENGTH_SHORT).show()*/
+
+            removewishlist?.enqueue(object : retrofit2.Callback<WishListRemoveModel> {
+
+                override fun onResponse(call: Call<WishListRemoveModel>, response: Response<WishListRemoveModel>) {
+                    recyclerView_wish.alpha = 1f
+                    context?.window?.clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
+                    spinkit_wish.visibility = View.GONE
+                    if (response.body() != null && response.isSuccessful) {
+
+                        (context as AppCompatActivity).supportFragmentManager?.beginTransaction()?.detach(wishlistrefresh)?.attach(wishlistrefresh)?.commit()
+//
+                        //removeAt(position)
+//
+                        Toast.makeText(context, "Item Remove!", Toast.LENGTH_SHORT).show()
+                    }
+
+                    else{
+                        Toast.makeText(context, "No Server!", Toast.LENGTH_SHORT).show()
+                    }
+
+                }
+
+                override fun onFailure(call: Call<WishListRemoveModel>, t: Throwable) {
+                    context?.window?.clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
+                    spinkit_wish.visibility = View.GONE
+                    Toast.makeText(context, "Check your internet connections", Toast.LENGTH_SHORT).show()
+                }
+            })
+        }
+        holder.wishlist_move_to_cart.setOnClickListener {
+
+            context?.window?.addFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
+            spinkit_wish.visibility = View.VISIBLE
+            spinkit_wish.alpha = 0.3f
+
+            val gson = GsonBuilder().setLenient().create()
+            val client = OkHttpClient()
+            val retrofit = Retrofit.Builder()
+                    .baseUrl(Constant.BASE_URL)
+                    .client(client)
+                    .addConverterFactory(GsonConverterFactory.create(gson))
+                    .build()
+            val moveto_cart = retrofit.create(Api::class.java)
+            //defining the call
+
+            pro_Id = data?.proId
+            userId = data?.userId
+           /* Toast.makeText(context, pro_Id, Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, userId, Toast.LENGTH_SHORT).show()*/
+
+
+            Move_TO_Cart = moveto_cart.movetoCart(userId!!,pro_Id!!)
+
+            Move_TO_Cart?.enqueue(object : retrofit2.Callback<MoveToCart> {
+                override fun onResponse(call: Call<MoveToCart>, response: Response<MoveToCart>) {
+                    spinkit_wish.alpha = 1f
+                    context?.window?.clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
+                    spinkit_wish.visibility = View.GONE
+                    if (response.body() != null && response.isSuccessful) {
+
+ (context as AppCompatActivity).supportFragmentManager?.beginTransaction()?.detach(wishlistrefresh)?.attach(wishlistrefresh)?.commit()
+                        Toast.makeText(context, ""+response.body()?.status, Toast.LENGTH_SHORT).show()
+                    }
+
+                    else{
+                        Toast.makeText(context, "No Response from Server!", Toast.LENGTH_SHORT).show()
+                    }
+
+                }
+
+                override fun onFailure(call: Call<MoveToCart>, t: Throwable) {
+                    context?.window?.clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
+                    spinkit_wish.visibility = View.GONE
+                    Toast.makeText(context, "Check your internet connections", Toast.LENGTH_SHORT).show()
+                }
+            })
+        }
+
+
+        holder.mainView.setOnClickListener {
+            val bundle = Bundle()
+            bundle.putString("singleProductId", data?.proId)
+            val singleProductViewFragment = SingleProductViewFragment()
+            singleProductViewFragment.arguments = bundle
+
+            fragmentManager = (context as AppCompatActivity).supportFragmentManager
+            fragmentTransaction = fragmentManager?.beginTransaction()
+            fragmentTransaction?.addToBackStack(null)
+            fragmentTransaction?.replace(R.id.mainFrameLayout, singleProductViewFragment)
+            fragmentTransaction?.commit()
+        }
+    }
+
+
+    class Myviewholder(itemView: View) : RecyclerView.ViewHolder(itemView){
+
+        val name  = itemView.textView_WishlistRecyclerView_title!!
+        val image = itemView.imageView_WishlistRecyclerView_photo!!
+        val price = itemView.textView_WishlistProductRecyclerView_price!!
+        val wishlist_item_remove = itemView.button_wishlist_item_remove!!
+        val wishlist_move_to_cart = itemView.button_wishlist_move_to_cart!!
+        var txtview_quantity = itemView.textView_wishlist_quantity!!
+        val mainView = itemView
+
+    }
+    override fun getItemId(position: Int): Long {
+        return position.toLong()
+    }
+
+    override fun getItemViewType(position: Int): Int {
+        return position
+    }
+
+    fun removeAt(position: Int) {
+        list?.removeAt(position)
+        notifyItemRemoved(position)
+        notifyItemRangeChanged(position, list?.size!!)
+    }
+
+
+}
