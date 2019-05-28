@@ -1,0 +1,17 @@
+// Data Pasing By Bundle
+
+val bundle = Bundle()
+            bundle.putString("singleProductId", data?.proId)
+            val singleProductViewFragment = SingleProductViewFragment()
+            singleProductViewFragment.arguments = bundle
+
+            fragmentManager = (context as AppCompatActivity).supportFragmentManager
+            fragmentTransaction = fragmentManager?.beginTransaction()
+            fragmentTransaction?.addToBackStack(null)
+            fragmentTransaction?.replace(R.id.mainFrameLayout, singleProductViewFragment)
+fragmentTransaction?.commit()
+
+// Get Data By Bundle
+
+ val bundle = this.arguments
+     productCategoryId = bundle!!.getString("productCategoryId")
