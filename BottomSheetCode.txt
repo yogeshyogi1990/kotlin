@@ -1,0 +1,80 @@
+///// import 
+ var bottomSheetBehavior: BottomSheetBehavior<*>? = null
+
+
+oncreate setcode
+   bottomSheetBehavior = BottomSheetBehavior.from(bottomsheet)
+
+// onclick listener setcode
+
+  profile_pic.setOnClickListener {
+            if (bottomSheetBehavior?.state != BottomSheetBehavior.STATE_EXPANDED) {
+                bottomSheetBehavior?.setState(BottomSheetBehavior.STATE_EXPANDED)
+
+            }
+            else {
+                bottomSheetBehavior?.setState(BottomSheetBehavior.STATE_COLLAPSED)
+            }
+
+        }
+
+// xml file
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+            android:id="@+id/bottomsheet">
+
+
+    <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:id="@+id/close">
+
+        <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_close"
+                android:layout_centerInParent="true"
+                android:layout_centerVertical="true"
+                android:layout_alignParentRight="true"
+                android:layout_marginRighft="@dimen/margin_20"/>
+    </RelativeLayout>
+
+
+    <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_below="@+id/close"
+            android:id="@+id/take_pic">
+
+        <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Take Photo"
+                android:textColor="@color/txtcolor"
+                android:layout_centerVertical="true"
+                android:layout_centerInParent="true"/>
+    </RelativeLayout>
+
+
+    <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_below="@+id/take_pic">
+
+        <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Select From Gallery"
+                android:layout_centerVertical="true"
+                android:textColor="@color/txtcolor"
+                android:layout_centerInParent="true"/>
+    </RelativeLayout>
+
+
+</RelativeLayout>
+
+
+

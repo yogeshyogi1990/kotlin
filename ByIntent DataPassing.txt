@@ -1,0 +1,21 @@
+   
+///PUT DATA ON FIRST ACTIVITY
+val intent = Intent(this@BecomeDealerActivity,BecomeDealerContinue::class.java)
+                intent.putExtra("fname", firstName)
+                intent.putExtra("lname", lastName)
+                intent.putExtra("email", emailId)
+                intent.putExtra("mobil", mobile)
+                    startActivity(intent)
+///////////// GET DATA ON SECOUND ACTIVITY///////////////
+ var strlastName:String?=null
+    var stremailId:String?=null
+    var strmobile:String?=null
+    var strbusinessname:String?=null
+    var strbusinessaddress:String?=null
+
+  strfirstName = intent.getStringExtra("fname")
+        strlastName = intent.getStringExtra("lname")
+        stremailId = intent.getStringExtra("email")
+        strmobile = intent.getStringExtra("mobil")
+        strbusinessname = intent.getStringExtra("busnesname")
+        strbusinessaddress = intent.getStringExtra("busaddress")

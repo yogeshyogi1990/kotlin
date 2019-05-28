@@ -1,0 +1,85 @@
+   private fun retrofitCall() {
+        val emailId = editText_signUp_email.text.toString().trim()
+        val password = editText_signUp_password.text.toString().trim()
+        val firstName = editText_signUp_firstName.text.toString().trim()
+        val lastName = editText_signUp_lastName.text.toString().trim()
+        val mobileNumber =editText_signUp_mobile.text.toString().trim()
+        val addresss =editText_signUp_address.text.toString().trim()
+        val state =spinner_signUp_state.selectedItem.toString().trim()
+        val city =spinner_signUp_city.selectedItem.toString().trim()
+        val terms = signup_termsandcondition.text.toString().trim()
+
+        if (firstName == "") {
+            editText_signUp_firstName.error = "Fill First Name"
+            editText_signUp_firstName.requestFocus()
+            return
+        } else if (lastName == "") {
+            editText_signUp_lastName.error = "Fill Last Name"
+            editText_signUp_lastName.requestFocus()
+            return
+        } /*else if (isValidEmail(emailId)) {
+            editText_signUp_email.error = "Fill Registered Email Id"
+            editText_signUp_email.requestFocus()
+
+            return
+
+        } *//*else if (isValidPassword(password)) {
+            editText_signUp_password.error = "Fill Password"
+            return
+        }*/
+        else if(mobileNumber == "" || mobileNumber.length<10){
+            editText_signUp_mobile.error = "Enter Mobile Number"
+            return
+        }
+        else if(terms == "")
+        {
+            signup_termsandcondition.error= "Please Accept Terms and Condition"
+
+        }
+
+        spinKit_signUp.visibility = View.VISIBLE
+        val gson = GsonBuilder().setLenient().create()
+        val client = OkHttpClient()
+        val retrofit = Retrofit.Builder()
+                .baseUrl(Constant.BASE_URL)
+                .client(client)
+                .addConverterFactory(GsonConverterFactory.create(gson))
+                .build()
+        val service = retrofit.create(Api::class.java)
+
+        //defining the call
+        val call = service.signUp(firstName, lastName, emailId, password,mobileNumber,addresss,state,city)
+
+       /* Toast.makeText(this@SignUpActivity,firstName, Toast.LENGTH_SHORT).show()
+        Toast.makeText(this@SignUpActivity,lastName, Toast.LENGTH_SHORT).show()
+        Toast.makeText(this@SignUpActivity,emailId, Toast.LENGTH_SHORT).show()
+        Toast.makeText(this@SignUpActivity,password, Toast.LENGTH_SHORT).show()
+        Toast.makeText(this@SignUpActivity,mobileNumber, Toast.LENGTH_SHORT).show()
+        Toast.makeText(this@SignUpActivity,addresss, Toast.LENGTH_SHORT).show()
+        Toast.makeText(this@SignUpActivity,state, Toast.LENGTH_SHORT).show()
+        Toast.makeText(this@SignUpActivity,city, Toast.LENGTH_SHORT).show()*/
+
+        call.enqueue(object : retrofit2.Callback<LoginModel> {
+            override fun onResponse(call: Call<LoginModel>, response: Response<LoginModel>) {
+                spinKit_signUp.visibility = View.GONE
+                if (response.body() != null && response.isSuccessful) {
+                    if (response.body()?.error == false) {
+                        clearedittext()
+                        Toast.makeText(this@SignUpActivity, response.body()?.status, Toast.LENGTH_SHORT).show()
+                        finish()
+                    } else {
+                        Toast.makeText(this@SignUpActivity, response.body()?.status, Toast.LENGTH_SHORT).show()
+                    }
+                } else {
+                    Toast.makeText(this@SignUpActivity, "No Response from Server", Toast.LENGTH_SHORT).show()
+                }
+
+            }
+
+            override fun onFailure(call: Call<LoginModel>, t: Throwable) {
+                spinKit_signUp.visibility = View.GONE
+                Toast.makeText(this@SignUpActivity, "No Response from Server!", Toast.LENGTH_SHORT).show()
+
+            }
+        })
+    }
