@@ -1,0 +1,80 @@
+ var preferences: SharedPreferences? = null
+    var editor: SharedPreferences.Editor? = null
+
+/////////// on Create 
+ preferences = getSharedPreferences("planetBazar", MODE_PRIVATE)
+
+// get shareprefrencedata
+
+ var preferences = getSharedPreferences("planetBazar", Context.MODE_PRIVATE)
+        userId = preferences.getString("id", "null")
+
+
+  private fun retrofitCall() {
+
+        val emailId = editText_login_username.text.toString().trim()
+        val password = editText_login_password.text.toString().trim()
+
+        if (emailId == "") {
+            editText_login_username.error = "Fill Registered Email Id"
+            return
+        } else if (password == "") {
+            editText_login_password.error = "Fill Password"
+            return
+        }
+
+        spinKit_login.visibility = View.VISIBLE
+        val gson = GsonBuilder().setLenient().create()
+        val client = OkHttpClient()
+        val retrofit = Retrofit.Builder()
+                .baseUrl(Constant.BASE_URL)
+                .client(client)
+                .addConverterFactory(GsonConverterFactory.create(gson))
+                .build()
+        val service = retrofit.create(Api::class.java)
+
+
+        //defining the call
+        val call = service.login(emailId, password)
+
+        call.enqueue(object : retrofit2.Callback<LoginModel> {
+            override fun onResponse(call: Call<LoginModel>, response: Response<LoginModel>) {
+                if (response.body() != null && response.isSuccessful) {
+                    spinKit_login.visibility = View.GONE
+                    if (response.body()?.error == false) {
+
+                        editor = preferences?.edit()
+                        editor?.putString("id", response.body()?.data?.get(0)?.id)
+                        editor?.putString("encryptids",response.body()?.encrptId)
+                        //Toast.makeText(this@LoginActivity,""+response?.body()?.encrptId,Toast.LENGTH_SHORT).show()
+                        editor?.putString("name", response.body()?.data?.get(0)?.firstName + " " + response.body()?.data?.get(0)?.lastName)
+                        editor?.putString("username", response.body()?.data?.get(0)?.username)
+                        editor?.putString("status", response.body()?.data?.get(0)?.status)
+                        editor?.putString("user_type", response.body()?.data?.get(0)?.userType)
+                        editor?.putString("created_date", response.body()?.data?.get(0)?.createdDate)
+                        if (checkbox_login.isChecked) {
+                            editor?.putString("loggedIn", "yes")
+                        }
+                        editor?.apply()
+
+                        startActivity(Intent(this@LoginActivity, HomePageActivity::class.java))
+                        finish()
+                    } else {
+                        Toast.makeText(this@LoginActivity, response.body()?.status, Toast.LENGTH_SHORT).show()
+                    }
+                } else {
+                    spinKit_login.visibility = View.GONE
+                    Toast.makeText(this@LoginActivity, "No Response from Server", Toast.LENGTH_SHORT).show()
+                }
+
+            }
+
+            override fun onFailure(call: Call<LoginModel>, t: Throwable) {
+                spinKit_login.visibility = View.GONE
+                Toast.makeText(this@LoginActivity, "No Response from Server!", Toast.LENGTH_SHORT).show()
+
+            }
+        })
+
+
+    }
