@@ -1,0 +1,55 @@
+ var msgshow: String? = null
+    var msgid:String? = null
+
+msgshow_recycleview.layoutManager = LinearLayoutManager(activity, LinearLayoutManager.VERTICAL, false)
+        msgshow_recycleview.itemAnimator = DefaultItemAnimator()
+        msgshow_recycleview.setHasFixedSize(true)
+
+
+
+
+   private fun msgshows() {
+
+        msgshow_progress.visibility = View.VISIBLE
+        val gson = GsonBuilder().setLenient().create()
+        val client = OkHttpClient()
+        val retrofit = Retrofit.Builder()
+            .baseUrl(Constant.BASE_URL)
+            .client(client)
+            .addConverterFactory(GsonConverterFactory.create(gson))
+            .build()
+
+        val service = retrofit.create(Api::class.java)
+
+        //defining the call
+        val call = service.fomsg(msgshow!!)
+
+        call.enqueue(object : retrofit2.Callback<MsgShowModel> {
+            override fun onResponse(call: Call<MsgShowModel>, response: Response<MsgShowModel>) {
+
+                msgshow_progress.visibility = View.GONE
+                if (response.body() != null && response.isSuccessful) {
+                    if (response.body()?.response?.get(0)?.error == "false") {
+
+                        msgid = response.body()!!.response?.get(0)?.msgId
+                        val adapter = Message_Adapter(response?.body()?.response, activity!!)
+                        msgshow_recycleview.adapter = adapter
+
+                    } else {
+                        Toast.makeText(activity, "Something Wrong", Toast.LENGTH_SHORT).show()
+                    }
+
+                } else {
+                    Toast.makeText(activity, "No Response from Server!", Toast.LENGTH_SHORT).show()
+                }
+
+            }
+
+            override fun onFailure(call: Call<MsgShowModel>, t: Throwable) {
+
+                msgshow_progress.visibility = View.GONE
+                Toast.makeText(activity, "Check your internet connections", Toast.LENGTH_SHORT).show()
+
+            }
+        })
+    }

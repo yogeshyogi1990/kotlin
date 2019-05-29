@@ -1,0 +1,74 @@
+
+// data call on fragment retofit call gridlayout manager
+
+ val bundle = this.arguments
+        productCategoryId = bundle!!.getString("productCategoryId")
+
+        val mLayoutManager = GridLayoutManager(activity, 2)
+        recyclerView_productSubCategory.layoutManager = mLayoutManager
+        recyclerView_productSubCategory.setHasFixedSize(true)
+
+
+
+  private fun prepareData() {
+        spinKit_productSubCategory.visibility = View.VISIBLE
+        activity?.window?.addFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
+        val gson = GsonBuilder().setLenient().create()
+        val client = OkHttpClient()
+        val retrofit = Retrofit.Builder()
+                .baseUrl(Constant.BASE_URL)
+                .client(client)
+                .addConverterFactory(GsonConverterFactory.create(gson))
+                .build()
+
+        val service = retrofit.create(Api::class.java)
+
+        //defining the call
+        val call = service.productSubCategory(productCategoryId!!)
+
+
+        call.enqueue(object : retrofit2.Callback<SubcategoryModel> {
+            override fun onResponse(call: Call<SubcategoryModel>, response: Response<SubcategoryModel>) {
+                activity?.window?.clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
+                try{
+                    spinKit_productSubCategory.visibility = View.GONE
+
+                    if (response.body() != null && response.isSuccessful) {
+                        if(response.body()?.error == false)
+                        {
+                            val adapter = RecyclerView_ProductSubCategory_Adapter(response.body()?.data, activity!!)
+                            recyclerView_productSubCategory.adapter = adapter
+                        }
+                        else
+                        {
+                            Toast.makeText(activity, "No Product Available", Toast.LENGTH_SHORT).show()
+                        }
+
+
+                    }
+                    else{
+                        Toast.makeText(activity, "No Response from Server!", Toast.LENGTH_SHORT).show()
+                    }
+                }
+                catch (e: Exception)
+                {
+                    Log.d("spins",e.printStackTrace().toString())
+                }
+
+            }
+
+            override fun onFailure(call: Call<SubcategoryModel>, t: Throwable) {
+                activity?.window?.clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
+                try{
+                    spinKit_productSubCategory.visibility = View.GONE
+
+                    Toast.makeText(activity, "Check your internet connections", Toast.LENGTH_SHORT).show()
+                }
+                catch (e:Exception)
+                {
+                    Log.d("spinss",e.printStackTrace().toString())
+                }
+
+            }
+        })
+    }
