@@ -1,3 +1,486 @@
-login.php
-register.php
-forgot.php
+
+
+interface Api {
+
+    @FormUrlEncoded
+    @POST("login")
+    fun login(
+            @Field("username") email: String,
+            @Field("password") password: String
+
+    ): Call<LoginModel>
+
+
+    @FormUrlEncoded
+    @POST("forget_password")
+    fun forgetpassword(
+            @Field("username") useremail: String
+
+    ): Call<ForgotPasswordModel>
+
+
+
+    @FormUrlEncoded
+    @POST("register")
+    fun signUp(
+            @Field("first_name") firstName: String,
+            @Field("last_name") lastName: String,
+            @Field("username") email: String,
+            @Field("password") password: String,
+            @Field("mobile") mobile: String,
+            @Field("business_address1") businessaddress: String,
+            @Field("state") state: String,
+            @Field("city") city: String
+
+    ): Call<LoginModel>
+
+    @GET("getshipping_city")
+    fun getstate(): Call<StateCityModel>
+
+
+    @GET("get_city")
+    fun getcity(): Call<CityModel>
+
+
+    @FormUrlEncoded
+    @POST("search_products")
+    fun searchresult(
+            @Field("city")search_city: String,
+            @Field("keyword")search_keword: String
+    ): Call<SearchModel>
+
+    @FormUrlEncoded
+    @POST("search_products_show")
+    fun searchshow(
+           @Field("dealer_id")Dealer_id:String,
+           @Field("keyword")keyword:String
+    ):Call<SearchProductShow>
+
+    @FormUrlEncoded
+    @POST("dealer_signup")
+    fun dealerregister(
+            @Field("first_name")dealer_first_name: String,
+            @Field("username")dealer_username: String,
+            @Field("password")dealer_password: String,
+            @Field("mobile")mobile: String,
+            @Field("state")state: String,
+            @Field("city")city: String
+
+    ): Call<DealerRegisterModel>
+
+    @FormUrlEncoded
+    @POST("dealers")
+    fun popular_dealers(
+            @Field("city")getselectedcity: String
+    ): Call<DealerModel>
+
+    @FormUrlEncoded
+    @POST("store_rating")
+    fun dealerrateingbar(
+            @Field("dealer_id")delerid: String,
+            @Field("user_id")userId: String,
+            @Field("rating")rates: String,
+            @Field("heading")headig: String,
+            @Field("review")reviews: String
+    ): Call<DealerRatingsModel>
+
+
+    @GET("slider")
+    fun homeslider(): Call<SliderModel>
+
+
+    @FormUrlEncoded
+    @POST("get_dealer_allreviews")
+    fun getuserreviews(
+            @Field("dealer_id") dealerId: String
+    ): Call<ShowDealerReviewsModel>
+
+
+    @FormUrlEncoded
+    @POST("get_dealer_rating")
+    fun showdealerrating(
+            @Field("dealer_id") dealerId: String
+    ): Call<ShowDealerRatingModel>
+
+
+    @GET("main_categories")
+    fun category(): Call<CategoryModel>
+
+    @FormUrlEncoded
+    @POST("sub_categories")
+    fun productSubCategory(
+            @Field("main_cat_id") categorId: String
+
+    ): Call<SubcategoryModel>
+
+
+    @FormUrlEncoded
+    @POST("sub_cat_store")
+    fun dealerStoreName(
+            @Field("sub_cat_id") subCategoryId: String,
+            @Field("city") getcity: String
+    ): Call<AllDealerNameModel>
+
+
+    @FormUrlEncoded
+    @POST("product_categories")
+    fun subCategoryBrand(
+            @Field("sub_cat_id") subCategoryId: String
+    ): Call<SubCategoryBrandModel>
+
+
+    @FormUrlEncoded
+    @POST("products")
+    fun subCategoryBrandProduct(
+            @Field("pro_cat_id") subCategoryBrandId: String
+    ): Call<SubCategoryBrandProductModel>
+
+    @FormUrlEncoded
+    @POST("products")
+    fun singleProduct(
+            @Field("id") id: String
+
+    ): Call<ProductViewModel>
+
+
+    @FormUrlEncoded
+    @POST("products")
+    fun dealerproducts(
+            @Field("dealer_id") dealerId: String,
+            @Field("sub_cat_id") subcatId: String
+    ): Call<DealerProductModel>
+
+
+    @FormUrlEncoded
+    @POST("products")
+    fun Alldealerproducts(
+            @Field("dealer_id") dealerId: String
+    ): Call<DealerProductModel>
+
+
+    @FormUrlEncoded
+    @POST("image_gallery")
+    fun productSlider(
+            @Field("pro_id") productId: String
+    ): Call<ProductSliderModel>
+
+
+    @FormUrlEncoded
+    @POST("count_cart_items")
+    fun cartCount(
+            @Field("user_id") userId: String
+    ): Call<CartCountModel>
+
+    @FormUrlEncoded
+    @POST("add_to_cart")
+    fun addToCart(
+            @Field("pro_id") productId: String,
+            @Field("user_id") userId: String,
+            @Field("quantity") quantity: String,
+            @Field("price") price: String,
+            @Field("parameters") param: String
+    ): Call<AddToCartModel>
+
+    @FormUrlEncoded
+    @POST("get_cart_items")
+    fun getCartitems(
+            @Field("user_id") userId: String
+    ): Call<ViewCartModel>
+
+
+    @FormUrlEncoded
+    @POST("remove_cart_item")
+    fun removeCart(
+            @Field("cart_id")cartId: String,
+            @Field("user_id")users_id: String
+    ): Call<RemoveCartItem>
+
+
+
+
+    @FormUrlEncoded
+    @POST("remove_cart_itemon_order")
+    fun removeplace(
+           @Field("pro_id[]")proId: ArrayList<String>,
+           @Field("user_id")userid: String
+    ):Call<OrderRemoveModel>
+
+
+    @FormUrlEncoded
+    @POST("update_cart_quantity")
+    fun updateCart(
+            @Field("user_id")use_id: String,
+            @Field("pro_id")proid: String,
+            @Field("quantity")quantity: String
+    ): Call<UpdateCartItem>
+
+
+
+
+    @FormUrlEncoded
+    @POST("add_to_wishlist")
+    fun addwhishlist(
+            @Field("pro_id")whishlist_pro_id: String,
+            @Field("user_id")whishlist_user_id: String,
+            @Field("quantity")whishlist_quantity: String
+    ): Call<AddToWhishlistModel>
+
+
+    @FormUrlEncoded
+    @POST("move_to_wishlist")
+    fun movewhishlist(
+            @Field("pro_id")whishlist_pro_id: String,
+            @Field("user_id")whishlist_user_id: String
+    ): Call<MoveToWishlist>
+
+
+    @FormUrlEncoded
+    @POST("add_to_wishlist_checkout")
+    fun checkoutwhishlist(
+            @Field("pro_id")whishlist_pro_id: String,
+            @Field("user_id")whishlist_user_id: String,
+            @Field("quantity")quantitys: String
+    ): Call<CheckoutWishlistModel>
+
+    @FormUrlEncoded
+    @POST("move_to_cart")
+    fun movetoCart(
+            @Field("user_id")use_id: String,
+            @Field("pro_id")proid: String
+    ): Call<MoveToCart>
+
+    
+    @FormUrlEncoded
+    @POST("get_wishlist_items")
+    fun getwishlistitems(
+            @Field("user_id")get_whishlist_user_id: String
+    ): Call<GetWishlistModel>
+
+
+    @FormUrlEncoded
+    @POST("remove_wishlist_item")
+    fun removeWishListItem(
+            @Field("wishlist_id")cartId: String,
+            @Field("user_id")users_id: String
+    ): Call<WishListRemoveModel>
+
+
+    @FormUrlEncoded
+    @POST("get_user_info")
+    fun getuserdetail(
+            @Field("user_id") userId: String
+    ): Call<GetUserInfo>
+
+
+    @FormUrlEncoded
+    @POST("Update_user_info")
+    fun updateuserdetail(
+            @Field("user_id") userId: String,
+            @Field("business_address1") address: String,
+            @Field("mobile") mobile: String,
+            @Field("city") city: String,
+            @Field("state") state: String
+    ): Call<UpdateUserInfo>
+
+
+
+    @FormUrlEncoded
+    @POST("dealer_update_info_advertisement_pack")
+    fun dealerupdateuserdetail(
+            @Field("dealer_id") dealerid: String,
+            @Field("business_name") bname: String,
+            @Field("business_address1") baddress: String,
+            @Field("city") city: String,
+            @Field("state") state: String,
+            @Field("mobile") mobile: String,
+            @Field("package_id") packid: String,
+            @Field("payment_mode") paymode: String,
+            @Field("receipt_no") recptno: String,
+            @Field("gst_no") gstno: String,
+            @Field("pan_no") panno: String
+    ): Call<DealerModel>
+
+
+
+
+    @FormUrlEncoded
+    @POST("dealer_update_info_product_pack")
+    fun dealerproupdateuserdetail(
+            @Field("dealer_id") dealerid: String,
+            @Field("business_name") bname: String,
+            @Field("business_address1") baddress: String,
+            @Field("city") city: String,
+            @Field("state") state: String,
+            @Field("mobile") mobile: String,
+            @Field("package_id") packid: String,
+            @Field("payment_mode") paymode: String,
+            @Field("receipt_no") recptno: String,
+            @Field("gst_no") gstno: String,
+            @Field("pan_no") panno: String
+    ): Call<ProductCheckoutModel>
+
+
+
+    @FormUrlEncoded
+    @POST("dealer_add_purchase")
+    fun dealeraddpurchase(
+            @Field("dealer_id")dealerid:String
+    ): Call<AddPurchaseModel>
+
+
+    @FormUrlEncoded
+    @POST("dealer_packages_expired")
+    fun expireproduct(
+            @Field("dealer_id")dealerid:String
+    ): Call<ExpireProductModel>
+
+    @FormUrlEncoded
+    @POST("dealer_packages_expired")
+    fun expireadd(
+            @Field("dealer_id")dealerid:String,
+            @Field("type")type:String
+    ): Call<ExpireProductModel>
+
+
+    @FormUrlEncoded
+    @POST("product_rating")
+    fun reviewriting(
+            @Field("user_id") userId: String,
+            @Field("pro_id") productId: String,
+            @Field("rating") ratings: String,
+            @Field("review") reviews: String
+    ): Call<ReviewModel>
+
+
+    @FormUrlEncoded
+    @POST("dealer_login")
+    fun dealerlogin(
+            @Field("username") username: String,
+            @Field("password") password: String
+    ): Call<DealerLogin>
+
+
+    @FormUrlEncoded
+    @POST("place_order")
+    fun placeorder(
+            @Field("pro_id[]") proId: ArrayList<String>,
+            @Field("user_id") userId: String,
+            @Field("quantity[]") quantity: ArrayList<String>,
+            @Field("payment_mode")cod: String
+
+    ): Call<OrderSubmitModel>
+
+
+    @FormUrlEncoded
+    @POST("place_order")
+    fun singleplaceorder(
+            @Field("pro_id[]") proId:ArrayList<String>,
+            @Field("user_id") userId: String,
+            @Field("quantity[]") quantity:ArrayList<String>,
+            @Field("payment_mode")cod: String
+
+    ): Call<OrderSubmitModel>
+
+    @FormUrlEncoded
+    @POST("get_orders")
+    fun track(
+            @Field("user_id")userid:String
+    ): Call<TrackOrderModel>
+
+
+    @FormUrlEncoded
+    @POST("cancelled_orders")
+    fun cancelorder(
+            @Field("user_id")userid:String
+    ): Call<CancelOrderModel>
+
+    @FormUrlEncoded
+    @POST("updatereasoncencel_orders")
+    fun cancelquery(
+            @Field("id")useid:String,
+            @Field("reasonforcancel")reasoncancel:String
+    ): Call<CancelReasonModel>
+
+    @FormUrlEncoded
+    @POST("updatereasonreturned_orders")
+    fun returnquery(
+            @Field("id")useid:String,
+            @Field("reasonforreturn")reasonreturn:String,
+            @Field("user_id")userId:String
+    ): Call<ReturnOrderModel>
+
+
+    @FormUrlEncoded
+    @POST("delivered_orders")
+    fun deliverorder(
+            @Field("user_id")userid:String
+    ): Call<DeliverModel>
+
+    @FormUrlEncoded
+    @POST("reorder")
+    fun reorder(
+            @Field("id")rid:String,
+            @Field("user_id")userid:String
+    ): Call<ReorderModel>
+
+    @FormUrlEncoded
+    @POST("returned_orders")
+    fun returnorderdisplay(
+            @Field("user_id")userid:String
+    ): Call<ReturnOrderShowModel>
+
+
+    @GET("product_packages")
+    fun packages(): Call<AdvertisementModel>
+
+
+    @GET("advertisement_packages")
+    fun adverpackages(): Call<AdverModel>
+
+    @FormUrlEncoded
+    @POST("single_addpackages")
+    fun singlepac(
+            @Field("package_id") packId:String
+    ): Call<SingleaddModel>
+
+    @FormUrlEncoded
+    @POST("get_dealer_info")
+    fun getdealer(
+            @Field("dealer_id") dealerid:String
+    ): Call<DealerCheckoutModel>
+
+    @FormUrlEncoded
+    @POST("single_packages")
+    fun singlepack(
+            @Field("package_id") packId:String
+    ): Call<SinglePackageModel>
+
+
+    @FormUrlEncoded
+    @POST("purchased_packages")
+    fun purchaepack(
+            @Field("dealer_id") dealerId:String
+    ): Call<PurchasePackModel>
+
+    @FormUrlEncoded
+    @POST("whatsapp_share")
+    fun shareonWhatspp(
+            @Field("pro_id") dproId:String,
+            @Field("city") mcity:String
+    ): Call<WhatsappModel>
+
+
+    @FormUrlEncoded
+    @POST("get_product_rating")
+    fun userrating(
+            @Field("pro_id") mproId:String
+    ): Call<ShowProductRatingModel>
+
+    @FormUrlEncoded
+    @POST("gmail_login")
+    fun glogin(
+            @Field("name") mname:String,
+            @Field("session") msession:String,
+            @Field("email") memail:String
+    ): Call<GmailloginModel>
+}
