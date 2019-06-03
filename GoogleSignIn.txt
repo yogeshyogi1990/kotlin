@@ -1,0 +1,128 @@
+https://console.firebase.google.com
+add project
+check service i enable if not enble it 
+go to authentication 
+enable gmail / email password service
+
+https://firebase.google.com/docs/?authuser=0 
+go to this link
+
+select get start with android
+//////////Go to geadle
+
+implementation 'com.google.firebase:firebase-core:16.0.1'
+    implementation 'com.google.android.gms:play-services:12.0.1'
+implementation 'com.google.android.gms:play-services-auth:16.0.0'
+apply plugin: 'com.google.gms.google-services'
+
+project.gradle
+maven { url "https://jitpack.io" }
+
+classpath 'com.google.gms:google-services:4.0.1'
+
+///////////on page
+
+On Create
+
+,View.OnClickListener, GoogleApiClient.OnConnectionFailedListener
+
+ val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestEmail()
+                .build()
+
+        mGoogleApiClient = GoogleApiClient.Builder(this@LoginActivity)
+                .enableAutoManage(this@LoginActivity,this@LoginActivity)
+                .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
+                .build()
+
+        glogin.setOnClickListener {
+            val signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient)
+            startActivityForResult(signInIntent, 7)
+        }
+
+var mGoogleApiClient: GoogleApiClient? = null
+
+
+//google login code
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == 7) {
+            val result = Auth.GoogleSignInApi.getSignInResultFromIntent(data)
+            handleSignInResult(result)
+        }
+
+
+    }
+
+    private fun handleSignInResult(result: GoogleSignInResult?) {
+        if (result!!.isSuccess) {
+
+            val acct = result.signInAccount
+
+            val personName = acct!!.displayName
+            val email = acct.email
+            val session = acct.id
+            //startActivity(Intent(this@LoginActivity, HomePageActivity::class.java))
+            /*Toast.makeText(this@LoginActivity,personName+" "+email+" "+session,Toast.LENGTH_LONG).show()
+            Auth.GoogleSignInApi.signOut(mGoogleApiClient).setResultCallback {}*/
+
+            glogin(personName,email,session)
+        }
+    }
+
+//start method
+
+    private fun glogin(personName: String?, email: String?, session: String?) {
+        spinKit_login.visibility = View.VISIBLE
+        val gson = GsonBuilder().setLenient().create()
+        val client = OkHttpClient()
+        val retrofit = Retrofit.Builder()
+                .baseUrl(Constant.BASE_URL)
+                .client(client)
+                .addConverterFactory(GsonConverterFactory.create(gson))
+                .build()
+        val service = retrofit.create(Api::class.java)
+
+
+        //defining the call
+        val call = service.glogin(personName!!,session!!, email!!)
+
+        call.enqueue(object : retrofit2.Callback<GmailloginModel> {
+            override fun onResponse(call: Call<GmailloginModel>, response: Response<GmailloginModel>) {
+                spinKit_login.visibility = View.GONE
+                if (response.body() != null && response.isSuccessful) {
+                    if (response.body()?.error == false) {
+                        editor = preferences?.edit()
+                        editor?.putString("id", response.body()?.data?.get(0)?.userId)
+       //Toast.makeText(this@LoginActivity, response.body()?.data?.get(0)?.userId, Toast.LENGTH_SHORT).show()
+                        editor?.putString("name", response.body()?.data?.get(0)?.name)
+                        editor?.putString("sessionid",response.body()?.data?.get(0)?.session)
+                        editor?.putString("status", response.body()?.data?.get(0)?.status)
+                        editor?.putString("user_type", response.body()?.data?.get(0)?.userType)
+
+                            editor?.putString("loggedIn", "yes")
+                        editor?.apply()
+                        startActivity(Intent(this@LoginActivity, HomePageActivity::class.java))
+                        finish()
+                    } else {
+                        Toast.makeText(this@LoginActivity, response.body()?.status, Toast.LENGTH_SHORT).show()
+                    }
+                } else {
+                    Toast.makeText(this@LoginActivity, "No Response from Server", Toast.LENGTH_SHORT).show()
+                }
+
+            }
+
+            override fun onFailure(call: Call<GmailloginModel>, t: Throwable) {
+                spinKit_login.visibility = View.GONE
+                Toast.makeText(this@LoginActivity, "No Response from Server!", Toast.LENGTH_SHORT).show()
+
+            }
+        })
+    }
+
+    override fun onConnectionFailed(p0: ConnectionResult) {
+    }
+
+    // end google login
+
